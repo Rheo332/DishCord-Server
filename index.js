@@ -5,6 +5,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const multer = require("multer");
 const path = require("path");
+const passport = require("passport");
 
 const authController = require("./controllers/authController");
 const recipeController = require("./controllers/recipeController");
@@ -20,6 +21,8 @@ app.listen(PORT, () => {
 app.use(cors());
 app.use("/uploads", express.static("public/uploads"));
 app.use(express.json());
+
+app.use(passport.initialize());
 
 const storage = multer.diskStorage({
   destination: "uploads/",
@@ -48,6 +51,10 @@ app.post("/auth/login", (req, res) => {
 
 app.post("/auth/register", (req, res) => {
   authController.register(req, res);
+});
+
+app.post("/auth/status", (req, res) => {
+  authController.status(req, res);
 });
 
 app.get("/auth/logout", (req, res) => {
