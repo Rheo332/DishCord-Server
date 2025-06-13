@@ -11,6 +11,7 @@ const authController = require("./controllers/authController");
 const recipeController = require("./controllers/recipeController");
 const serviceStatusController = require("./controllers/serviceStatusController");
 const userController = require("./controllers/userController");
+const interactionController = require("./controllers/interactionController");
 
 const app = express();
 const PORT = process.env.PORT;
@@ -61,6 +62,10 @@ app.post("/auth/status", (req, res) => {
 
 app.get("/auth/logout", (req, res) => {
   authController.logout(req, res);
+});
+
+app.post("/recipes/bookmark", (req, res) => {
+  interactionController.bookmarkRecipe(req, res);
 });
 
 app.post("/recipes", upload.array("images", 5), (req, res) => {
