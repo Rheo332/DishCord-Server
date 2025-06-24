@@ -14,7 +14,7 @@ async function bookmarkRecipe(req, res) {
     }
 
     const userId = decoded.id;
-    const { query } = req.body;
+    const { recipeId } = req.body;
 
     try {
       const user = await User.findById(userId);
@@ -22,18 +22,18 @@ async function bookmarkRecipe(req, res) {
         return res.status(404).json({ message: "User not found" });
       }
 
-      const recipe = await Recipe.findById(query);
+      const recipe = await Recipe.findById(recipeId);
       if (!recipe) {
         return res.status(404).json({ message: "Recipe not found" });
       }
 
-      const isAlreadyBookmarked = user.favoriteRecipes.some((id) => id.toString() === query);
+      const isAlreadyBookmarked = user.favoriteRecipes.some((id) => id.toString() === recipeId);
       if (isAlreadyBookmarked) {
-        user.favoriteRecipes.pull(query);
+        user.favoriteRecipes.pull(recipeId);
         await user.save();
         return res.status(200).json({ message: "Recipe removed from bookmarks" });
       } else {
-        user.favoriteRecipes.addToSet(query);
+        user.favoriteRecipes.addToSet(recipeId);
         await user.save();
         return res.status(200).json({ message: "Recipe bookmarked successfully" });
       }
@@ -54,7 +54,7 @@ async function sentimentRecipe(req, res) {
     }
 
     const userId = decoded.id;
-    const { query, sentiment } = req.body;
+    const { recipeId, sentiment } = req.body;
 
     try {
       const user = await User.findById(userId);
@@ -62,27 +62,27 @@ async function sentimentRecipe(req, res) {
         return res.status(404).json({ message: "User not found" });
       }
 
-      const recipe = await Recipe.findById(query);
+      const recipe = await Recipe.findById(recipeId);
       console.log("Recipe found:", recipe);
-      console.log("Recipe ID:", query);
+      console.log("Recipe ID:", recipeId);
       if (!recipe) {
         return res.status(404).json({ message: "Recipe not found" });
       }
 
-      const isLiked = user.likedRecipes.some((id) => id.toString() === query);
-      const isDisliked = user.dislikedRecipes.some((id) => id.toString() === query);
+      const isLiked = user.likedRecipes.some((id) => id.toString() === recipeId);
+      const isDisliked = user.dislikedRecipes.some((id) => id.toString() === recipeId);
       if (sentiment === "like") {
         if (isLiked) {
-          user.likedRecipes.pull(query);
+          user.likedRecipes.pull(recipeId);
           recipe.likeCount -= 1;
           await user.save();
           await recipe.save();
           return res.status(200).json({ message: "Recipe like removed successfully" });
         }
-        user.likedRecipes.addToSet(query);
+        user.likedRecipes.addToSet(recipeId);
         recipe.likeCount += 1;
         if (isDisliked) {
-          user.dislikedRecipes.pull(query);
+          user.dislikedRecipes.pull(recipeId);
           recipe.dislikeCount -= 1;
         }
         await user.save();
@@ -90,16 +90,16 @@ async function sentimentRecipe(req, res) {
         return res.status(200).json({ message: "Recipe liked successfully" });
       } else if (sentiment === "dislike") {
         if (isDisliked) {
-          user.dislikedRecipes.pull(query);
+          user.dislikedRecipes.pull(recipeId);
           recipe.dislikeCount -= 1;
           await user.save();
           await recipe.save();
           return res.status(200).json({ message: "Recipe dislike removed successfully" });
         }
-        user.dislikedRecipes.addToSet(query);
+        user.dislikedRecipes.addToSet(recipeId);
         recipe.dislikeCount += 1;
         if (isLiked) {
-          user.likedRecipes.pull(query);
+          user.likedRecipes.pull(recipeId);
           recipe.likeCount -= 1;
         }
         await user.save();

@@ -68,7 +68,6 @@ app.get("/auth/logout", (req, res) => {
 });
 
 app.post("/recipes/bookmark", (req, res) => {
-  console.log("Bookmarking recipe:", req.body);
   interactionController.bookmarkRecipe(req, res);
 });
 
