@@ -36,9 +36,6 @@ const storage = multer.diskStorage({
 });
 const upload = multer({
   storage: storage,
-  limits: {
-    fileSize: 10 * 1024 * 1024,
-  },
 });
 
 mongoose
@@ -71,6 +68,7 @@ app.get("/auth/logout", (req, res) => {
 });
 
 app.post("/recipes/bookmark", (req, res) => {
+  console.log("Bookmarking recipe:", req.body);
   interactionController.bookmarkRecipe(req, res);
 });
 
